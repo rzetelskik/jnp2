@@ -3,6 +3,8 @@ var http = require('http').createServer(app)
 var io = require('socket.io')(http).of('/notify')
 var amqp = require('amqplib/callback_api')
 
+var port = process.env.PROXY_PORT || 3003;
+
 function checkError(e) {
   if(e) {
     console.error(e);
@@ -59,6 +61,6 @@ io.on('connection', socket => {
   
 });
 
-http.listen(3003, () => {
-  console.log('listening on *:3003');
+http.listen(port, () => {
+  console.log(`listening on *:${port}`);
 });
