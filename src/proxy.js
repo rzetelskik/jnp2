@@ -1,10 +1,28 @@
-var app = require('express')
-var http = require('http').createServer(app)
-var io = require('socket.io')(http).of('/notify')
-var amqp = require('amqplib/callback_api')
-
+//ENVIRONMENTAL VARIABLES
 var port = 3000;
 var host = process.env.HOST_RABBITMQ || 'localhost'
+
+//EXPRESS APP
+var express = require('express')
+var http = require('http')
+
+var app = express()
+var server = http.createServer(app);
+
+//WEBSOCKET
+var io = require('socket.io')(server, {
+  handlePreflightRequest: (req, res) => {
+      const headers = {
+          "Access-Control-Allow-Headers": "Content-Type, Authorization",
+          "Access-Control-Allow-Origin": req.headers.origin,
+          "Access-Control-Allow-Credentials": true
+      };
+      res.writeHead(200, headers);
+      res.end();
+  }
+}).of('/notify');
+var amqp = require('amqplib/callback_api')
+
 
 function checkError(e) {
   if(e) {
@@ -68,6 +86,6 @@ io.on('connection', socket => {
   
 });
 
-http.listen(port, () => {
+server.listen(port, () => {
   console.log(`Listening on *:${port}`);
 });
