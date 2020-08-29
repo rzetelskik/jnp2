@@ -9,20 +9,24 @@ var host = process.env.HOST_RABBITMQ || 'localhost'
 function checkError(e) {
   if(e) {
     console.error(e);
+    return true;
   }
+
+  return false;
 }
 
 function handleMessage(socket, msg) {
-  console.log('amqp received');
   socket.emit('message', msg.content.toString());
 }
 
 function connectToAmqp(socket, username) {
   amqp.connect(`amqp://${host}`, (e0, connection) => {
-    checkError(e0);
+    if(checkError(e0))
+      return;
 
     connection.createChannel((e1, channel) => {
-      checkError(e1);
+      if(checkError(e1))
+        return;
 
       var exchange = 'projects';
 
@@ -33,13 +37,17 @@ function connectToAmqp(socket, username) {
       channel.assertQueue('', {
         exclusive: true
       }, (e2, q) => {
-        checkError(e2);
+        if(checkError(e2))
+          return;
 
         channel.bindQueue(q.queue, exchange, username);
 
-        console.log('waiting for message from queue');
+        console.log(`Waiting for message from queue for ${username}`);
 
-        channel.consume(q.queue, msg => handleMessage(socket, msg), {
+        channel.consume(q.queue, msg => {
+          handleMessage(socket, msg);
+          console.log(`Amqp message for ${username} received`)
+        }, {
           noAck: true
         });
       });
@@ -47,21 +55,19 @@ function connectToAmqp(socket, username) {
   });
 }
 
-io.use((socket, next) => {
-
-  next();
-});
-
 io.on('connection', socket => {
-  console.log('connected');
+  console.log(`Client ID: ${socket.client.id} CONNECTED`);
 
   socket.on('username', username => {
     connectToAmqp(socket, username);
   });
 
+  socket.on('disconnect', () => {
+    console.log(`Client ID: ${socket.client.id} DISCONNECTED`);
+  })
   
 });
 
 http.listen(port, () => {
-  console.log(`listening on *:${port}`);
+  console.log(`Listening on *:${port}`);
 });
