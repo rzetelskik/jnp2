@@ -1,5 +1,5 @@
 //ENVIRONMENTAL VARIABLES
-var port = 3000;
+var port = process.env.PORT || 3000;
 var host = process.env.HOST_RABBITMQ || 'localhost'
 
 //EXPRESS APP
