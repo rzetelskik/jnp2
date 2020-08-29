@@ -3,7 +3,7 @@ var http = require('http').createServer(app)
 var io = require('socket.io')(http).of('/notify')
 var amqp = require('amqplib/callback_api')
 
-var port = process.env.PROXY_PORT || 80;
+var port = 3000;
 var host = process.env.HOST_RABBITMQ || 'localhost'
 
 function checkError(e) {

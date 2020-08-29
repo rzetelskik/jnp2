@@ -21,7 +21,7 @@ spec:
           image: rzetelskik/jnp2-proxy:latest
           imagePullPolicy: Always
           ports:
-            - containerPort: 80
+            - containerPort: 3000
               name: http
           envFrom:
             - configMapRef:
