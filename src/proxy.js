@@ -3,7 +3,8 @@ var http = require('http').createServer(app)
 var io = require('socket.io')(http).of('/notify')
 var amqp = require('amqplib/callback_api')
 
-var port = process.env.PROXY_PORT || 3003;
+var port = process.env.PROXY_PORT || 80;
+var host = process.env.HOST_RABBITMQ || 'localhost'
 
 function checkError(e) {
   if(e) {
@@ -17,7 +18,7 @@ function handleMessage(socket, msg) {
 }
 
 function connectToAmqp(socket, username) {
-  amqp.connect('amqp://localhost', (e0, connection) => {
+  amqp.connect(`amqp://${host}`, (e0, connection) => {
     checkError(e0);
 
     connection.createChannel((e1, channel) => {

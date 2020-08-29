@@ -2,10 +2,10 @@
   "name": "proxy",
   "version": "1.0.0",
   "description": "",
-  "main": "proxy.js",
+  "main": "src/proxy.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node proxy.js"
+    "start": "node src/proxy.js"
   },
   "author": "",
   "license": "ISC",

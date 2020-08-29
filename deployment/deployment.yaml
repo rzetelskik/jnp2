@@ -1,0 +1,28 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jnp2
+  name: proxy
+spec:
+  selector:
+    matchLabels:
+      app: jnp2
+      component: proxy
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app: jnp2
+        component: proxy
+    spec:
+      containers:
+        - name: proxy
+          image: rzetelskik/jnp2-proxy:latest
+          imagePullPolicy: Always
+          ports:
+            - containerPort: 80
+              name: http
+          envFrom:
+            - configMapRef:
+                name: rabbitmq-config
