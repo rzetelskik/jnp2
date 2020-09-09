@@ -13,9 +13,6 @@ spec:
     - name: task-queue
       port: 5672
       targetPort: task-queue
-    - name: monitor
-      port: 15672
-      targetPort: monitor
   selector:
     app: jnp2
     component: rabbitmq
