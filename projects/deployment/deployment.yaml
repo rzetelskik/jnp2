@@ -1,0 +1,76 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: projects
+  namespace: jnp2
+  labels:
+    app: jnp2
+spec:
+  selector:
+    matchLabels:
+      app: jnp2
+      tier: backend
+      component: projects
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jnp2
+        tier: backend
+        component: projects
+    spec:
+      initContainers:
+        - name: wait-for-db
+          image: busybox:1.28
+          command: ['/bin/sh']
+          args:
+            - -c
+            - >
+              set -x;
+              until nslookup ${DB_HOST_PROJECTS}; do
+                echo waiting for ${DB_HOST_PROJECTS};
+                sleep 2;
+              done;
+          envFrom:
+            - configMapRef:
+                name: mysql-projects-config
+        - name: init-db
+          image: rzetelskik/jnp2-projects:latest
+          command: ['/bin/bash', '-c', 'bundle exec rake db:create && bundle exec rake db:migrate']
+          envFrom:
+            - configMapRef:
+                name: mysql-projects-config
+            - configMapRef:
+                name: projects-config
+            - configMapRef:
+                name: rabbitmq-config
+          env:
+            - name: DB_PASSWORD_PROJECTS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-projects
+                  key: root-password
+      containers:
+        - image: rzetelskik/jnp2-projects:latest
+          name: projects
+          envFrom:
+            - configMapRef:
+                name: mysql-projects-config
+            - configMapRef:
+                name: projects-config
+            - configMapRef:
+                name: accounts-config
+            - configMapRef:
+                name: rabbitmq-config
+          env:
+            - name: DB_PASSWORD_PROJECTS
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-projects
+                  key: root-password
+          ports:
+            - containerPort: 80
+              name: http

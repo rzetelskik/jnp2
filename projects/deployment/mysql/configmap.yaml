@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-projects-config
+  namespace: jnp2
+data:
+  DB_NAME_PROJECTS: 'projects'
+  DB_USER_PROJECTS: 'root'
+  DB_HOST_PROJECTS: 'mysql-projects.jnp2.svc.cluster.local'
