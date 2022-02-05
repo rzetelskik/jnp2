@@ -1,0 +1,17 @@
+deployment
+.gitignore
+.idea
+Dockerfile
+README.md
+/.bundle
+/log/*
+/tmp/*
+!/log/.keep
+!/tmp/.keep
+/tmp/pids/*
+!/tmp/pids/
+!/tmp/pids/.keep
+/storage/*
+!/storage/.keep
+.byebug_history
+/config/master.key

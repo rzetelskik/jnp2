@@ -1,0 +1,16 @@
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  namespace: jnp2
+  name: mysql-accounts-pvc
+  labels:
+    app: jnp2
+    tier: backend
+    component: mysql-accounts
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi

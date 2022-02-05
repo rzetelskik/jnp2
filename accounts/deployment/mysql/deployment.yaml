@@ -1,0 +1,79 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: jnp2
+  name: mysql-accounts
+  labels:
+    app: jnp2
+    tier: backend
+    component: mysql-accounts
+spec:
+  selector:
+    matchLabels:
+      app: jnp2
+      tier: backend
+      component: mysql-accounts
+  replicas: 1
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: jnp2
+        tier: backend
+        component: mysql-accounts
+    spec:
+      containers:
+        - name: mysql
+          image: mysql:5.6
+          imagePullPolicy: 'Always'
+          env:
+            - name: MYSQL_DATABASE
+              value: 'accounts'
+            - name: MYSQL_USER
+              value: 'accounts'
+            - name: MYSQL_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-accounts
+                  key: password
+            - name: MYSQL_ROOT_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: mysql-accounts
+                  key: root-password
+          ports:
+            - name: mysql
+              containerPort: 3306
+          livenessProbe:
+            exec:
+              command: ['sh', '-c', 'exec mysqladmin status -uroot -p"$MYSQL_ROOT_PASSWORD"']
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          readinessProbe:
+            exec:
+              command: ['sh', '-c', 'exec mysqladmin status -uroot -p"$MYSQL_ROOT_PASSWORD"']
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 1
+            successThreshold: 1
+            failureThreshold: 5
+          volumeMounts:
+            - name: data
+              mountPath: /var/lib/mysql
+          resources:
+            requests:
+              memory: 256Mi
+              cpu: 200m
+            limits:
+              memory: 512Mi
+              cpu: 400m
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: mysql-accounts-pvc
+            

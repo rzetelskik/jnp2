@@ -1,0 +1,10 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: mysql-accounts-config
+  namespace: jnp2
+data:
+  DB_NAME_ACCOUNTS: 'accounts'
+  DB_USER_ACCOUNTS: 'root'
+  DB_HOST_ACCOUNTS: 'mysql-accounts.jnp2.svc.cluster.local'

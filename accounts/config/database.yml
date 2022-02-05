@@ -1,0 +1,22 @@
+default: &default
+  adapter: mysql2
+  encoding: utf8mb4
+  collation: utf8mb4_bin
+  port: 3306
+  database: <%= ENV.fetch("DB_NAME_ACCOUNTS") { 'accounts' } %>
+  username: <%= ENV.fetch("DB_USER_ACCOUNTS") { 'root' } %>
+  password: <%= ENV.fetch("DB_PASSWORD_ACCOUNTS") { '' } %>
+  host: <%= ENV.fetch("DB_HOST_ACCOUNTS") { 'localhost' } %>
+  pool: <%= ENV.fetch("RAILS_MAX_THREADS") { 5 } %>
+  timeout: 5000
+  migrations_paths: db/migrate
+
+development:
+  <<: *default
+
+test:
+  <<: *default
+  database: 'test'
+
+production:
+  <<: *default

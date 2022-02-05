@@ -1,0 +1,20 @@
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: accounts
+  namespace: jnp2
+  labels:
+    app: jnp2
+    tier: backend
+    component: accounts
+spec:
+  ports:
+    - protocol: TCP
+      port: 80
+      targetPort: http
+  selector:
+    app: jnp2
+    tier: backend
+    component: accounts
+  type: ClusterIP
