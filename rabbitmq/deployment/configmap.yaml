@@ -1,0 +1,8 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: rabbitmq-config
+  namespace: jnp2
+data:
+  HOST_RABBITMQ: 'rabbitmq.jnp2.svc.cluster.local'
